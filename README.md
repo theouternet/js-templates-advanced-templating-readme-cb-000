@@ -3,8 +3,8 @@
 ## Objectives
 
 1. Explain how to use Handlebars templates
-2. Describe Handlebars' built-in helpers (`if` and `each`)
-3. Practice writing a template using Handlebars
+2. Practice writing a template using Handlebars
+3. Describe Handlebars' built-in helpers (`if` and `each`)
 4. Write a custom Handlebars helper
 
 ## Introduction
@@ -19,7 +19,7 @@ Today we're going to work with [Handlebars](http://handlebarsjs.com), which is a
 
 Let's jump right in and create a Handlebars template and render it to the page. Similar to some other template engines, we can define a Handlebars template inside of a `<script>` tag with a combination of regular HTML and Handlebars-specific delimiters.
 
-In our `index.html` let's define a basic template to render a GitHub issue.
+In our `index.html` let's define a basic template to render a GitHub issue. We also need to add a simple link inside `<main>` to fire a `loadIssue` function that will render our template.
 
 ```html
 <!-- <body>... -->
@@ -43,16 +43,19 @@ Inside the `script` tag, we have some pretty basic HTML for the most part, and t
 
 ![rollie](http://i.giphy.com/26tOW7KBU86Vkc4rC.gif)
 
-Finally, we included a simple link to fire a `loadIssue` function that we'll use to render our template, so let's get into our `index.js` and create that function.
+Now let's get into our `index.js` and create the `loadIssue` function.
 
 ```js
 //index.js
 function loadIssue() {
   var issue = {
-    state: "closed",
-    number: 5,
-    created_at: "2016-03-31 16:23:13 UTC",
-    body: "Instructions say GET /team and POST /newteam. Rspec wants GET/newteam and POST/team."
+    "body": "Instructions say GET /team and POST /newteam. Rspec wants GET/newteam and POST/team.",
+    "created_at": "2016-03-31 16:23:13 UTC",
+    "comments_count": 0,
+    "id": 144948778,
+    "number": 7,
+    "state": "closed",
+    "url": "https://api.github.com/repos/learn-co-curriculum/basic-sinatra-forms-lab/issues/7"
   }
 
   var template = Handlebars.compile(document.getElementById("issue-template").innerHTML);
@@ -115,11 +118,11 @@ Now let's alter our template to handle the collection.
 </main>
 <script id="issue-template" type="text/x-handlebars-template">
   {{#each this}}
-  <article>
-    <header><h3>Issue #{{number}} ({{state}})</h3></header>
-    <p>{{body}}</p>
-    <footer><a href="{{url}}">created {{created_at}}</a></footer>
-  </article>
+    <article>
+      <header><h3>Issue #{{number}} ({{state}})</h3></header>
+      <p>{{body}}</p>
+      <footer><a href="{{url}}">created {{created_at}}</a></footer>
+    </article>
   {{/each}}
 </script>
 ```
@@ -143,16 +146,16 @@ Looking at our `issues.js`, it seems like some of our issues have comments, and 
 ```html
 <script id="issue-template" type="text/x-handlebars-template">
   {{#each this}}
-  <article>
-    <header><h3>Issue #{{number}} ({{state}})</h3></header>
-    <p>{{body}}</p>
-    {{#if comments_count}}
-    <p>{{comments_count}} Comments</p>
-    {{else}}
-    <p>No Comments Yet</p>
-    {{/if}}
-    <footer><a href="{{url}}">created {{created_at}}</a></footer>
-  </article>
+    <article>
+      <header><h3>Issue #{{number}} ({{state}})</h3></header>
+      <p>{{body}}</p>
+      {{#if comments_count}}
+        <p>{{comments_count}} Comments</p>
+      {{else}}
+        <p>No Comments Yet</p>
+      {{/if}}
+      <footer><a href="{{url}}">created {{created_at}}</a></footer>
+    </article>
   {{/each}}
 </script>
 ```
@@ -171,7 +174,7 @@ Handlebars allows us to create and register our own custom helpers for exactly t
 
 Let's say we want to apply a different style to the issue body if the issue is closed versus open.
 
-We could probably use that built-in `if` helper to draw out two different template styles, the more we litter our templates with decision-making logic, the less decoupled our presentation logic is from our data.
+While we could probably use that built-in `if` helper to draw out two different template styles, the more we litter our templates with decision-making logic, the less decoupled our presentation logic is from our data.
 
 Also they just get ugly with a bunch of `if` statements all over the place.
 
@@ -206,16 +209,16 @@ Now to use it in our template:
 ```html
 <script id="issue-template" type="text/x-handlebars-template">
   {{#each this}}
-  <article>
-    <header><h3>Issue #{{number}} ({{state}})</h3></header>
-    <p>{{comment_body}}</p>
-    {{#if comments_count}}
-    <p>{{comments_count}} Comments</p>
-    {{else}}
-    <p>No Comments Yet</p>
-    {{/if}}
-    <footer><a href="{{url}}">created {{created_at}}</a></footer>
-  </article>
+    <article>
+      <header><h3>Issue #{{number}} ({{state}})</h3></header>
+      <p>{{comment_body}}</p>
+      {{#if comments_count}}
+        <p>{{comments_count}} Comments</p>
+      {{else}}
+        <p>No Comments Yet</p>
+      {{/if}}
+      <footer><a href="{{url}}">created {{created_at}}</a></footer>
+    </article>
   {{/each}}
 </script>
 ```
